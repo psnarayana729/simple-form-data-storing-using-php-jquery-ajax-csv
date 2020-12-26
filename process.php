@@ -11,6 +11,8 @@ if (empty($_POST['name']))
 
 if (empty($_POST['email']))
     $errors['email'] = 'Email is required.';
+else if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) 
+    $errors['email'] = "Invalid email format";
 
 if (empty($_POST['superheroAlias']))
     $errors['superheroAlias'] = 'Superhero alias is required.';
@@ -29,6 +31,22 @@ if ( ! empty($errors)) {
 
     // DO ALL YOUR FORM PROCESSING HERE
     // THIS CAN BE WHATEVER YOU WANT TO DO (LOGIN, SAVE, UPDATE, WHATEVER)
+
+    //CSV storing process
+    $file_open = fopen("contact_data.csv", "a");
+    $no_rows = count(file("contact_data.csv"));
+    if($no_rows > 1)
+    {
+        $no_rows = ($no_rows - 1) + 1;
+    }
+    $form_data = array(
+                    'sr_no' => $no_rows,
+                    'name' => $_POST['name'],
+                    'email' => $_POST['email'],
+                    'superheroAlias' => $_POST['superheroAlias']
+                );
+    fputcsv($file_open, $form_data);
+
 
     // show a message of success and provide a true success variable
     $data['success'] = true;
